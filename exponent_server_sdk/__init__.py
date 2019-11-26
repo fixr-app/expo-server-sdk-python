@@ -141,7 +141,7 @@ PushMessage.__new__.__defaults__ = (None,) * len(PushMessage._fields)
 
 
 class PushResponse(namedtuple('PushResponse', [
-        'push_message', 'status', 'message', 'details'])):
+        'push_message', 'status', 'message', 'details', 'id'])):
     """Wrapper class for a push notification response.
 
     A successful single push notification:
@@ -295,12 +295,16 @@ class PushClient(object):
         # Now let's parse the responses per push notification.
         receipts = []
         for i, receipt in enumerate(response_data['data']):
-            receipts.append(PushResponse(
-                push_message=push_messages[i],
-                # If there is no status, assume error.
-                status=receipt.get('status', PushResponse.ERROR_STATUS),
-                message=receipt.get('message', ''),
-                details=receipt.get('details', None)))
+            receipts.append(
+                PushResponse(
+                    push_message=push_messages[i],
+                    # If there is no status, assume error.
+                    status=receipt.get('status', PushResponse.ERROR_STATUS),
+                    message=receipt.get('message', ''),
+                    details=receipt.get('details', None),
+                    id=receipt.get('id', None),
+                )
+            )
 
         return receipts
 
